@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	chatServer := server.InitServer(":1234")
+	chatServer := server.InitServer(":64123")
 
 	fmt.Println("Server listening on port", chatServer.Address)
 
