@@ -1,11 +1,15 @@
 package gui
 
 import (
+	"github.com/faiface/beep"
+	"github.com/faiface/beep/speaker"
+	"github.com/faiface/beep/wav"
 	"github.com/jroimartin/gocui"
 	"github.com/losyear/go-tcp-socket-chat/client"
 	"github.com/losyear/go-tcp-socket-chat/client/gui/widgets"
 	"github.com/losyear/go-tcp-socket-chat/shared"
 	"log"
+	"os"
 	"time"
 )
 
@@ -22,11 +26,14 @@ type Application struct {
 	loginInput *widgets.InputWidget
 
 	messages []widgets.MessageEntry
+
+	newMessageSound beep.StreamSeeker
+	soundPlaying    bool
 }
 
 func NewApplication() *Application {
 
-	return &Application{isSubscribed: false}
+	return &Application{isSubscribed: false, soundPlaying: false}
 }
 
 func (app *Application) init(address string) {
@@ -47,6 +54,40 @@ func (app *Application) initGUI() {
 
 	app.gui = gui
 
+}
+
+func (app *Application) loadSound() {
+	f, err := os.Open("sounds/new_message.wav")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	streamer, format, err := wav.Decode(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	app.newMessageSound = streamer
+
+	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
+}
+
+func (app *Application) playSound() {
+	if app.soundPlaying {
+		return
+	}
+
+	app.soundPlaying = true
+	done := make(chan bool)
+
+	app.newMessageSound.Seek(0)
+	speaker.Play(beep.Seq(app.newMessageSound, beep.Callback(func() {
+		done <- true
+	})))
+
+	<-done
+
+	app.soundPlaying = false
 }
 
 func (app *Application) destroy() {
@@ -97,14 +138,20 @@ func (app *Application) newMessage(response shared.Response) {
 	text, _ := val["text"]
 	username, _ := val["username"]
 
+	selfAuthored := username.(string) == app.state.Login
+
 	app.messages = append(app.messages, widgets.MessageEntry{
 		Username: username.(string),
 		Text:     text.(string),
 		GotAt:    time.Now(),
-		Self:     username.(string) == app.state.Login,
+		Self:     selfAuthored,
 	})
 
 	app.gui.Update(app.messagesList.Layout)
+
+	if !selfAuthored {
+		go app.playSound()
+	}
 }
 
 func (app *Application) subscribe() {
@@ -159,6 +206,7 @@ func (app *Application) Run(address string) {
 
 	app.init(address)
 	app.initGUI()
+	app.loadSound()
 
 	app.draw()
 
