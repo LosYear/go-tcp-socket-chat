@@ -1,4 +1,4 @@
-package serverapp
+package main
 
 import (
 	"fmt"
