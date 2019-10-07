@@ -2,6 +2,8 @@ package server
 
 import (
 	"encoding/json"
+	"github.com/losyear/go-tcp-socket-chat/shared"
+	"log"
 	"net"
 )
 
@@ -17,7 +19,9 @@ func (server Server) clientHandler(conn net.Conn) {
 			return
 		}
 
-		request := Request{}
+		log.Println("Request:", string(buf[0:]))
+
+		request := shared.Request{}
 
 		err = json.Unmarshal(buf[:bufSize], &request)
 
@@ -25,7 +29,13 @@ func (server Server) clientHandler(conn net.Conn) {
 			return
 		}
 
-		response, _ := json.Marshal(server.requestHandler(conn, request))
+		result := server.requestHandler(conn, request)
+
+		if result == nil {
+			continue
+		}
+
+		response, _ := json.Marshal(result)
 
 		_, err = conn.Write([]byte(response))
 

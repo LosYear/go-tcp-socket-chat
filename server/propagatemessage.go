@@ -1,8 +1,11 @@
 package server
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"github.com/losyear/go-tcp-socket-chat/shared"
+)
 
-func (server Server) propagateMessage(message Response) {
+func (server Server) propagateMessage(message shared.Response) {
 	for _, user := range server.users {
 		jsonMessage, _ := json.Marshal(message)
 

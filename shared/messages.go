@@ -1,4 +1,4 @@
-package server
+package shared
 
 const (
 	LoginActionName            = "login"
@@ -19,4 +19,9 @@ type Response struct {
 	Error   bool        `json:"error"`
 	Message string      `json:"message"`
 	Payload interface{} `json:"payload,omitempty"`
+}
+
+type TextMessage struct {
+	Username string `json:"username"`
+	Text     string `json:"text"`
 }

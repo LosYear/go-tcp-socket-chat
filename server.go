@@ -1,8 +1,8 @@
 package main
 
 import (
-	"./server"
 	"fmt"
+	"github.com/losyear/go-tcp-socket-chat/server"
 )
 
 func main() {
