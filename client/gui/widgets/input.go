@@ -57,7 +57,7 @@ func (w *InputWidget) Layout(g *gocui.Gui) error {
 }
 
 func (w *InputWidget) Value() string {
-	return strings.Trim(w.view.Buffer(), "\n")
+	return strings.Trim(w.view.Buffer(), "\n ")
 }
 
 func (w *InputWidget) Clear() {
