@@ -1,9 +1,8 @@
 # Go TCP socket chat
 
-![Screenshot](https://raw.githubusercontent.com/LosYear/go-tcp-socket-chat/master/_github/screenshot2.png)
+![](https://habrastorage.org/webt/j3/tb/he/j3tbhebgkvwsev7mj_xyb7zuvcm.png)
 
-![Screenshot](https://raw.githubusercontent.com/LosYear/go-tcp-socket-chat/master/_github/screenshot1.png)
-
+![](https://habrastorage.org/webt/jp/6k/zp/jp6kzpxtvskspb_oidh6ab8llci.png)
 
 ## About
 Naive implementation of TCP client-server multiuser chat. 
